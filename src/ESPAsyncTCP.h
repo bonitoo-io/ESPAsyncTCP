@@ -299,7 +299,7 @@ class AsyncServer {
     void onSslFileRequest(AcSSlFileHandler cb, void* arg);
     void beginSecure(const char *cert, const char *private_key_file, const char *password);
 #endif
-    void begin();
+    int8_t begin();
     void end();
     void setNoDelay(bool nodelay);
     bool getNoDelay();

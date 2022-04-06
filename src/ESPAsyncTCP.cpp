@@ -1107,14 +1107,14 @@ void AsyncServer::onSslFileRequest(AcSSlFileHandler cb, void* arg){
 }
 #endif
 
-void AsyncServer::begin(){
+int8_t AsyncServer::begin(){
   if(_pcb)
-    return;
+    return -1;
 
   int8_t err;
   tcp_pcb* pcb = tcp_new();
   if (!pcb){
-    return;
+    return -2;
   }
 
   tcp_setprio(pcb, TCP_PRIO_MIN);
@@ -1124,17 +1124,18 @@ void AsyncServer::begin(){
   // Failures are ERR_ISCONN or ERR_USE
   if (err != ERR_OK) {
     tcp_close(pcb);
-    return;
+    return -3;
   }
 
   tcp_pcb* listen_pcb = tcp_listen(pcb);
   if (!listen_pcb) {
     tcp_close(pcb);
-    return;
+    return -4;
   }
   _pcb = listen_pcb;
   tcp_arg(_pcb, (void*) this);
   tcp_accept(_pcb, &_s_accept);
+  return 0;
 }
 
 #if ASYNC_TCP_SSL_ENABLED
